@@ -17,6 +17,7 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 [[package]]
 name = "calamine"
 version = "0.21.2"
+source = "git+https://github.com/tiibun/calamine#89ebd958f2a549374af3257c3f0ccabba5918c45"
 dependencies = [
  "byteorder",
  "codepage",
