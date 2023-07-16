@@ -2,7 +2,7 @@ use calamine::{open_workbook_auto, Reader};
 
 fn main() {
     let mut args = std::env::args();
-    let path = args.by_ref().skip(1).next().expect("No filename given");
+    let path = args.by_ref().nth(1).expect("No filename given");
     let mut xl = open_workbook_auto(path).expect("Failed to open file");
 
     for (sheet_name, range) in xl.worksheets() {
