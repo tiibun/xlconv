@@ -45,5 +45,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: target/release/xlconv{,.exe}
+          artifacts: target/release/xlconv,target/release/xlconv.exe
           generateReleaseNotes: true
