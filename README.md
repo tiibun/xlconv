@@ -20,7 +20,7 @@ which allows you to compare Excel files in a text-based format using xlconv.
 
 ## Setup
 
-(1) Download xlconv binary from [Releases](./releases) and store it in a folder that is added to your PATH.
+(1) Download xlconv binary from [Releases](https://github.com/tiibun/xlconv/releases) and store it in a folder that is added to your PATH.
 
 (2) Edit (or create if not exist) ~/.config/git/attributes (global) or {GIT_PROJECT}/.gitattributes (per project)
 
