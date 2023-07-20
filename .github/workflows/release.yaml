@@ -26,24 +26,27 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+        target:
+          - x86_64-pc-windows-gnu
+          - x86_64-apple-darwin
+          - x86_64-unknown-linux-gnu
+          - aarch64-apple-darwin
+          - aarch64-unknown-linux-gnu
+    runs-on: ubuntu-18.04
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: Install Rust
+        uses: rustup update stable
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
-          toolchain: stable
-          override: true
+          target: ${{ matrix.target }}
       - name: build
-        uses: actions-rs/cargo@v1
+        run: cargo build --release --all-features
+      - uses: taiki-e/upload-rust-binary-action@v1
         with:
-          command: build
-          args: --release --all-features
-      - name: Release artifacts
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: target/release/xlconv,target/release/xlconv.exe
-          generateReleaseNotes: true
+          bin: target/release/
+          target: ${{ matrix.target }}
+          token: ${{ secrets.GITHUB_TOKEN }}
