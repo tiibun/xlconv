@@ -43,11 +43,13 @@ jobs:
           target: ${{ matrix.target }}
       - name: build
         run: cargo build --release --all-features
-      - uses: taiki-e/create-gh-release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: taiki-e/upload-rust-binary-action@v1
-        with:
-          bin: target/${{ matrix.target }}/release/xlconv
-          target: ${{ matrix.target }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: ls
+        run: ls -l -R target
+      # - uses: taiki-e/create-gh-release-action@v1
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: taiki-e/upload-rust-binary-action@v1
+      #   with:
+      #     bin: target/${{ matrix.target }}/release/xlconv
+      #     target: ${{ matrix.target }}
+      #     token: ${{ secrets.GITHUB_TOKEN }}
