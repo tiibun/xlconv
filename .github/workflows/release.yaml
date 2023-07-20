@@ -17,6 +17,7 @@ jobs:
       - name: Run cargo clippy
         run: cargo clippy
   build:
+    needs: check
     strategy:
       matrix:
         include:
