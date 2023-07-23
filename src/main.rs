@@ -1,8 +1,17 @@
 use calamine::{open_workbook_auto, Reader};
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(version, about)]
+struct Cli {
+    /// Sets the input file to use
+    input: String,
+}
 
 fn main() {
-    let mut args = std::env::args();
-    let path = args.by_ref().nth(1).expect("No filename given");
+    let cli = Cli::parse();
+    let path = cli.input;
+
     let mut xl = open_workbook_auto(path).expect("Failed to open file");
 
     for (sheet_name, range) in xl.worksheets() {

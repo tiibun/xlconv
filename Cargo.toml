@@ -1,9 +1,11 @@
 [package]
 name = "xlconv"
 version = "0.1.0"
+description = "Convert Excel to text."
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 calamine = { git = "https://github.com/tafia/calamine" }
+clap = { version = "4.3.19", features = ["derive"] }
