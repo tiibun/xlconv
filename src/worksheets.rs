@@ -8,23 +8,26 @@ pub fn operate_worksheets<RS: Read + Seek>(
 ) -> Result<(), Error> {
     for (sheet_name, range) in xl.worksheets() {
         let formulas = if print_formula {
-            Some(match xl.worksheet_formula(&sheet_name) {
-                Ok(f) => f,
-                Err(e) => {
-                    return Err(e);
-                }
-            })
+            Some(xl.worksheet_formula(&sheet_name)?)
         } else {
             None
         };
 
-        for line in format_rows(range, formulas) {
-            println!("[{}]{}", sheet_name, line);
-        }
+        print_sheet_lines(&sheet_name, range, formulas);
     }
 
     print_vba(xl);
     Ok(())
+}
+
+fn print_sheet_lines(
+    sheet_name: &str,
+    range: Range<Data>,
+    formulas: Option<Range<String>>,
+) {
+    for line in format_rows(range, formulas) {
+        println!("[{}]{}", sheet_name, line);
+    }
 }
 
 fn format_rows(
@@ -47,33 +50,30 @@ fn format_rows(
 }
 
 fn get_value_or_formula(value: Option<&Data>, formula: Option<&String>) -> String {
-    if let Some(f) = formula {
-        if !f.is_empty() {
-            return "=".to_string() + &f.to_string();
-        }
-    }
-    if let Some(c) = value {
-        c.to_string()
-    } else {
-        String::new()
-    }
+    formula.filter(|f| !f.is_empty())
+           .map(|f| "=".to_string() + f)
+           .or_else(|| value.map(|c| c.to_string()))
+           .unwrap_or_default()
 }
 
 fn print_vba<RS: Read + Seek>(mut xl: Sheets<RS>) {
     if let Some(Ok(mut vba)) = xl.vba_project() {
         let vba = vba.to_mut();
-        for module in vba.get_module_names() {
-            if let Ok(s) = vba.get_module(module) {
-                // initialize string vec
-                let lines = s
-                    .lines()
-                    .filter(|l| !l.starts_with("Attribute "))
-                    .collect::<Vec<_>>();
-                if !lines.is_empty() {
-                    println!("[{}]", module);
-                    lines.iter().for_each(|l| println!("{}", l));
-                }
+        for module_name in vba.get_module_names() {
+            if let Ok(module_content) = vba.get_module(module_name) {
+                print_vba_module(module_name, &module_content);
             }
         }
+    }
+}
+
+fn print_vba_module(module_name: &str, module_content: &str) {
+    let lines = module_content
+        .lines()
+        .filter(|line| !line.starts_with("Attribute "))
+        .collect::<Vec<_>>();
+    if !lines.is_empty() {
+        println!("[{}]", module_name);
+        lines.iter().for_each(|line| println!("{}", line));
     }
 }
